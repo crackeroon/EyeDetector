@@ -29,8 +29,8 @@ public class EyeDetectorController
 		this.vidCapture = new VideoCapture();
 		eyeCascade=new CascadeClassifier();
 		faceCascade=new CascadeClassifier();
-		eyeCascade.load("src/haarcascade_eye.xml");
-		faceCascade.load("src/haarcascade_frontalface_alt.xml");
+		eyeCascade.load("src/main/java/haarcascade_eye.xml");
+		faceCascade.load("src/main/java/haarcascade_frontalface_alt.xml");
 		originalFrame.setFitWidth(600);
 		originalFrame.setPreserveRatio(true);
 	}
@@ -56,7 +56,7 @@ public class EyeDetectorController
 
 				Runnable frameGrabber = new Runnable() {
 					
-					@Override
+					//@Override
 					public void run()
 					{
 						Mat frame = grabFrame();
@@ -112,15 +112,15 @@ public class EyeDetectorController
 		MatOfRect eyes = new MatOfRect();
 		Mat grayFrame = new Mat();
 		Imgproc.cvtColor(frame, grayFrame, Imgproc.COLOR_BGR2GRAY);
-		faceCascade.detectMultiScale(grayFrame,faces,1.1,4);
+		faceCascade.detectMultiScale(grayFrame,faces,1.1,4, 0, new Size(20, 20), new Size());
 		Rect[] faceArray = faces.toArray();
 		for (int i = 0; i < faceArray.length; i++) {
-			Imgproc.rectangle(frame, faceArray[i], new Scalar(0, 255, 255), 1);
+			Imgproc.rectangle(frame, new Point(faceArray[i].x, faceArray[i].y), new Point(faceArray[i].x + faceArray[i].width, faceArray[i].y + faceArray[i].height), new Scalar(0, 255, 255), 1);
 			Mat grayFaceFrame = grayFrame;
 			Rect ROI = new Rect(faceArray[i].x,faceArray[i].y,faceArray[0].width/2,faceArray[0].height/2 );
-			Imgproc.rectangle(frame,ROI,new Scalar(0,0,255),1);
+			Imgproc.rectangle(frame,new Point(faceArray[i].x, faceArray[i].y), new Point(faceArray[i].x + faceArray[i].width/2, faceArray[i].y + faceArray[i].height/2),new Scalar(0,0,255),1);
 			grayFaceFrame = grayFaceFrame.submat(ROI);
-			eyeCascade.detectMultiScale(grayFaceFrame,eyes,1.1,4);
+			eyeCascade.detectMultiScale(grayFaceFrame,eyes,1.1,4, 0, new Size(10, 10), new Size());
 			Rect[] eyesArray = eyes.toArray();
 			for(int j=0;j<eyesArray.length;j++)
 			{
